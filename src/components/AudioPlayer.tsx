@@ -15,8 +15,10 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useTTS } from '@/hooks/useTTS';
+import { useTTS, type TTSEngine } from '@/hooks/useTTS';
 import { EpubBook } from '@/hooks/useEpubReader';
+import { TTSEngineSelector } from './TTSEngineSelector';
+import { CurrentTextDisplay } from './CurrentTextDisplay';
 
 interface AudioPlayerProps {
   book: EpubBook;
@@ -37,9 +39,11 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   onChapterSelect,
   className
 }) => {
+  const [engine, setEngine] = useState<TTSEngine>('native');
   const [speed, setSpeed] = useState(1.0);
   const [volume, setVolume] = useState(0.8);
   const [showChapters, setShowChapters] = useState(false);
+  
   
   const {
     speak,
@@ -50,8 +54,10 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     isLoading,
     progress,
     error,
-    isReady
-  } = useTTS({ speed });
+    isReady,
+    currentText,
+    getCurrentReadingText
+  } = useTTS({ engine, speed });
 
   const handlePlayPause = useCallback(() => {
     if (isPlaying) {
@@ -77,6 +83,10 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
     setVolume(value[0]);
   }, []);
 
+  const handleEngineChange = useCallback((newEngine: TTSEngine) => {
+    setEngine(newEngine);
+  }, []);
+
   const currentChapterInfo = book.chapters[currentChapter];
 
   return (
@@ -98,6 +108,19 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           </div>
         </div>
       </Card>
+
+      {/* Selector de motor TTS */}
+      <TTSEngineSelector
+        currentEngine={engine}
+        onEngineChange={handleEngineChange}
+      />
+
+      {/* Display del texto actual */}
+      <CurrentTextDisplay
+        currentText={currentText}
+        getCurrentReadingText={getCurrentReadingText}
+        isPlaying={isPlaying}
+      />
 
       {/* Información del capítulo actual */}
       <Card className="bg-audio-surface border-audio-muted p-4">

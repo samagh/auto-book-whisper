@@ -1,7 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { pipeline } from '@huggingface/transformers';
+import { useNativeTTS } from './useNativeTTS';
+
+export type TTSEngine = 'native' | 'huggingface';
 
 export interface TTSOptions {
+  engine?: TTSEngine;
   model?: string;
   voice?: string;
   speed?: number;
@@ -9,10 +13,20 @@ export interface TTSOptions {
 }
 
 export const useTTS = (options: TTSOptions = {}) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
+  const { engine = 'native' } = options;
+  
+  // Hook para TTS nativo
+  const nativeTTS = useNativeTTS({
+    speed: options.speed,
+    pitch: options.pitch,
+    volume: 0.8
+  });
+
+  // Estados para Hugging Face TTS
+  const [hfIsPlaying, setHfIsPlaying] = useState(false);
+  const [hfIsLoading, setHfIsLoading] = useState(false);
+  const [hfProgress, setHfProgress] = useState(0);
+  const [hfError, setHfError] = useState<string | null>(null);
   const [synthesizer, setSynthesizer] = useState<any>(null);
   
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -21,17 +35,19 @@ export const useTTS = (options: TTSOptions = {}) => {
   const startTimeRef = useRef<number>(0);
   const pauseTimeRef = useRef<number>(0);
 
+  
   const {
     model = 'microsoft/speecht5_tts',
     speed = 1.0,
     pitch = 1.0
   } = options;
 
-  // Inicializar el modelo TTS
+  // Inicializar el modelo TTS de Hugging Face solo si se necesita
   useEffect(() => {
+    if (engine !== 'huggingface') return;
     const initTTS = async () => {
       try {
-        setIsLoading(true);
+        setHfIsLoading(true);
         // Usando el modelo de Microsoft SpeechT5 que es más ligero para el navegador
         const tts = await pipeline('text-to-speech', model, {
           device: 'webgpu', // Intentar usar WebGPU si está disponible
@@ -44,31 +60,31 @@ export const useTTS = (options: TTSOptions = {}) => {
           const tts = await pipeline('text-to-speech', model);
           setSynthesizer(tts);
         } catch (cpuErr) {
-          setError(`Error al cargar modelo TTS: ${cpuErr instanceof Error ? cpuErr.message : 'Error desconocido'}`);
+          setHfError(`Error al cargar modelo TTS: ${cpuErr instanceof Error ? cpuErr.message : 'Error desconocido'}`);
         }
       } finally {
-        setIsLoading(false);
+        setHfIsLoading(false);
       }
     };
 
     initTTS();
-  }, [model]);
+  }, [model, engine]);
 
-  // Función para convertir texto a audio
-  const speak = useCallback(async (text: string) => {
+  // Función para convertir texto a audio con Hugging Face
+  const speakWithHuggingFace = useCallback(async (text: string) => {
     if (!synthesizer) {
-      setError('Modelo TTS no está listo');
+      setHfError('Modelo TTS no está listo');
       return;
     }
 
     if (!text.trim()) {
-      setError('Texto vacío');
+      setHfError('Texto vacío');
       return;
     }
 
     try {
-      setIsLoading(true);
-      setError(null);
+      setHfIsLoading(true);
+      setHfError(null);
 
       // Dividir el texto en chunks más pequeños para mejor rendimiento
       const chunks = text.match(/.{1,200}(?:\s|$)/g) || [text];
@@ -103,9 +119,9 @@ export const useTTS = (options: TTSOptions = {}) => {
       playAudioBuffer();
       
     } catch (err) {
-      setError(`Error en síntesis de voz: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+      setHfError(`Error en síntesis de voz: ${err instanceof Error ? err.message : 'Error desconocido'}`);
     } finally {
-      setIsLoading(false);
+      setHfIsLoading(false);
     }
   }, [synthesizer]);
 
@@ -124,8 +140,8 @@ export const useTTS = (options: TTSOptions = {}) => {
     source.playbackRate.value = speed;
     
     source.onended = () => {
-      setIsPlaying(false);
-      setProgress(0);
+      setHfIsPlaying(false);
+      setHfProgress(0);
     };
 
     const startOffset = pauseTimeRef.current;
@@ -133,14 +149,14 @@ export const useTTS = (options: TTSOptions = {}) => {
     startTimeRef.current = audioContextRef.current.currentTime - startOffset;
     
     sourceRef.current = source;
-    setIsPlaying(true);
+    setHfIsPlaying(true);
 
     // Actualizar progreso
     const updateProgress = () => {
-      if (isPlaying && audioBufferRef.current) {
+      if (hfIsPlaying && audioBufferRef.current) {
         const elapsed = audioContextRef.current!.currentTime - startTimeRef.current;
         const duration = audioBufferRef.current.duration;
-        setProgress(Math.min((elapsed / duration) * 100, 100));
+        setHfProgress(Math.min((elapsed / duration) * 100, 100));
         
         if (elapsed < duration) {
           requestAnimationFrame(updateProgress);
@@ -148,31 +164,64 @@ export const useTTS = (options: TTSOptions = {}) => {
       }
     };
     updateProgress();
-  }, [speed, isPlaying]);
+  }, [speed, hfIsPlaying]);
 
-  const pause = useCallback(() => {
+  const pauseHuggingFace = useCallback(() => {
     if (sourceRef.current && audioContextRef.current) {
       const elapsed = audioContextRef.current.currentTime - startTimeRef.current;
       pauseTimeRef.current = elapsed;
       sourceRef.current.stop();
-      setIsPlaying(false);
+      setHfIsPlaying(false);
     }
   }, []);
 
-  const resume = useCallback(() => {
-    if (audioBufferRef.current && !isPlaying) {
+  const resumeHuggingFace = useCallback(() => {
+    if (audioBufferRef.current && !hfIsPlaying) {
       playAudioBuffer();
     }
-  }, [playAudioBuffer, isPlaying]);
+  }, [playAudioBuffer, hfIsPlaying]);
 
-  const stop = useCallback(() => {
+  const stopHuggingFace = useCallback(() => {
     if (sourceRef.current) {
       sourceRef.current.stop();
     }
-    setIsPlaying(false);
-    setProgress(0);
+    setHfIsPlaying(false);
+    setHfProgress(0);
     pauseTimeRef.current = 0;
   }, []);
+
+  // Funciones principales que delegan según el engine
+  const speak = useCallback(async (text: string) => {
+    if (engine === 'native') {
+      return nativeTTS.speak(text);
+    } else {
+      return speakWithHuggingFace(text);
+    }
+  }, [engine, nativeTTS.speak, speakWithHuggingFace]);
+
+  const pause = useCallback(() => {
+    if (engine === 'native') {
+      return nativeTTS.pause();
+    } else {
+      return pauseHuggingFace();
+    }
+  }, [engine, nativeTTS.pause, pauseHuggingFace]);
+
+  const resume = useCallback(() => {
+    if (engine === 'native') {
+      return nativeTTS.resume();
+    } else {
+      return resumeHuggingFace();
+    }
+  }, [engine, nativeTTS.resume, resumeHuggingFace]);
+
+  const stop = useCallback(() => {
+    if (engine === 'native') {
+      return nativeTTS.stop();
+    } else {
+      return stopHuggingFace();
+    }
+  }, [engine, nativeTTS.stop, stopHuggingFace]);
 
   // Cleanup
   useEffect(() => {
@@ -186,15 +235,31 @@ export const useTTS = (options: TTSOptions = {}) => {
     };
   }, []);
 
+  // Retornar valores según el engine seleccionado
+  const currentValues = engine === 'native' ? {
+    isPlaying: nativeTTS.isPlaying,
+    isLoading: false,
+    progress: nativeTTS.progress,
+    error: nativeTTS.error,
+    isReady: nativeTTS.isReady,
+    currentText: nativeTTS.currentText,
+    getCurrentReadingText: nativeTTS.getCurrentReadingText
+  } : {
+    isPlaying: hfIsPlaying,
+    isLoading: hfIsLoading,
+    progress: hfProgress,
+    error: hfError,
+    isReady: !!synthesizer,
+    currentText: '',
+    getCurrentReadingText: () => ''
+  };
+
   return {
     speak,
     pause,
     resume,
     stop,
-    isPlaying,
-    isLoading,
-    progress,
-    error,
-    isReady: !!synthesizer
+    ...currentValues,
+    engine
   };
 };
