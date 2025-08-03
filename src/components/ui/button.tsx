@@ -18,12 +18,20 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        // Android Auto specific variants
+        auto: "bg-gradient-audio text-audio-text hover:opacity-90 shadow-auto border-0 auto-button-large auto-focus",
+        "auto-secondary": "bg-audio-surface text-audio-text hover:bg-audio-surface/80 shadow-surface border border-audio-muted auto-button-large auto-focus",
+        "auto-accent": "bg-gradient-accent text-accent-foreground hover:opacity-90 shadow-auto border-0 auto-button-large auto-focus",
+        "auto-ghost": "text-audio-text hover:bg-audio-surface/50 auto-button-large auto-focus",
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
+        // Android Auto sizes
+        "auto-large": "h-16 w-16 rounded-xl text-lg",
+        "auto-wide": "h-14 px-8 rounded-xl text-lg min-w-32",
       },
     },
     defaultVariants: {
