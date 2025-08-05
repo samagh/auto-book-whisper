@@ -26,27 +26,27 @@ export const TTSEngineSelector: React.FC<TTSEngineSelectorProps> = ({
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant={currentEngine === 'native' ? 'auto' : 'auto-secondary'}
-            size="auto-wide"
+            size="sm"
             onClick={() => onEngineChange('native')}
-            className="flex flex-col gap-2 h-auto py-3"
+            className="flex items-center gap-2 h-auto py-2"
           >
-            <Smartphone className="h-5 w-5" />
-            <div className="text-center">
-              <div className="text-sm font-semibold">Nativo</div>
-              <div className="text-xs opacity-75">Android/Sistema</div>
+            <Smartphone className="h-4 w-4" />
+            <div className="text-left">
+              <div className="text-xs font-semibold">Nativo</div>
+              <div className="text-xs opacity-75">Sistema</div>
             </div>
           </Button>
           
           <Button
             variant={currentEngine === 'huggingface' ? 'auto' : 'auto-secondary'}
-            size="auto-wide"
+            size="sm"
             onClick={() => onEngineChange('huggingface')}
-            className="flex flex-col gap-2 h-auto py-3"
+            className="flex items-center gap-2 h-auto py-2"
           >
-            <Brain className="h-5 w-5" />
-            <div className="text-center">
-              <div className="text-sm font-semibold">IA</div>
-              <div className="text-xs opacity-75">Hugging Face</div>
+            <Brain className="h-4 w-4" />
+            <div className="text-left">
+              <div className="text-xs font-semibold">IA</div>
+              <div className="text-xs opacity-75">HuggingFace</div>
             </div>
           </Button>
         </div>

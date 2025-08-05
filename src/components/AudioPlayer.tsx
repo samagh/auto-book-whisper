@@ -19,6 +19,7 @@ import { useTTS, type TTSEngine } from '@/hooks/useTTS';
 import { EpubBook } from '@/hooks/useEpubReader';
 import { TTSEngineSelector } from './TTSEngineSelector';
 import { CurrentTextDisplay } from './CurrentTextDisplay';
+import { HuggingFaceModelSelector } from './HuggingFaceModelSelector';
 
 interface AudioPlayerProps {
   book: EpubBook;
@@ -43,6 +44,8 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   const [speed, setSpeed] = useState(1.0);
   const [volume, setVolume] = useState(0.8);
   const [showChapters, setShowChapters] = useState(false);
+  const [showModelSelector, setShowModelSelector] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>('microsoft/speecht5_tts');
   
   
   const {
@@ -84,7 +87,22 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   }, []);
 
   const handleEngineChange = useCallback((newEngine: TTSEngine) => {
-    setEngine(newEngine);
+    if (newEngine === 'huggingface') {
+      setShowModelSelector(true);
+    } else {
+      setEngine(newEngine);
+      setShowModelSelector(false);
+    }
+  }, []);
+
+  const handleModelSelect = useCallback((modelId: string) => {
+    setSelectedModel(modelId);
+    setEngine('huggingface');
+    setShowModelSelector(false);
+  }, []);
+
+  const handleBackFromModelSelector = useCallback(() => {
+    setShowModelSelector(false);
   }, []);
 
   const currentChapterInfo = book.chapters[currentChapter];
@@ -109,51 +127,107 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         </div>
       </Card>
 
-      {/* Selector de motor TTS */}
-      <TTSEngineSelector
-        currentEngine={engine}
-        onEngineChange={handleEngineChange}
-      />
-
-      {/* Display del texto actual */}
-      <CurrentTextDisplay
-        currentText={currentText}
-        getCurrentReadingText={getCurrentReadingText}
-        isPlaying={isPlaying}
-      />
-
-      {/* Información del capítulo actual */}
+      {/* Información del capítulo actual con texto que se está leyendo */}
       <Card className="bg-audio-surface border-audio-muted p-4">
-        <div className="flex items-center justify-between">
-          <Button
-            variant="auto-ghost"
-            size="auto-large"
-            onClick={onPreviousChapter}
-            disabled={currentChapter === 0}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          
-          <div className="flex-1 text-center px-4">
-            <p className="auto-text-medium text-audio-text truncate">
-              {currentChapterInfo?.label || `Capítulo ${currentChapter + 1}`}
-            </p>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="auto-ghost"
+              size="auto-large"
+              onClick={onPreviousChapter}
+              disabled={currentChapter === 0}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            
+            <div className="flex-1 text-center px-4">
+              <p className="auto-text-medium text-audio-text truncate">
+                {currentChapterInfo?.label || `Capítulo ${currentChapter + 1}`}
+              </p>
+            </div>
+            
+            <Button
+              variant="auto-ghost"
+              size="auto-large"
+              onClick={onNextChapter}
+              disabled={currentChapter >= book.chapters.length - 1}
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
           </div>
-          
-          <Button
-            variant="auto-ghost"
-            size="auto-large"
-            onClick={onNextChapter}
-            disabled={currentChapter >= book.chapters.length - 1}
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
+
+          {/* Texto actual que se está leyendo */}
+          <div className="bg-audio-background/50 border border-audio-muted rounded-lg p-4 min-h-24">
+            <div className="text-center">
+              {currentText ? (
+                <p className="text-audio-text text-sm leading-relaxed">
+                  {getCurrentReadingText?.() || currentText}
+                </p>
+              ) : (
+                <p className="text-audio-muted text-sm italic">
+                  {isPlaying ? 'Preparando texto...' : 'Presiona play para comenzar'}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Porcentaje del capítulo */}
+          <div className="text-center text-xs text-audio-muted">
+            Progreso: {Math.round(progress)}%
+          </div>
         </div>
       </Card>
 
-      {/* Progreso de reproducción */}
-      <Card className="bg-audio-surface border-audio-muted p-4">
-        <div className="space-y-4">
+      {/* Controles principales con velocidad y volumen */}
+      <Card className="bg-audio-surface border-audio-muted p-6">
+        <div className="space-y-6">
+          {/* Controles de reproducción */}
+          <div className="flex items-center justify-center gap-4">
+            <Button
+              variant="auto-secondary"
+              size="auto-large"
+              onClick={onPreviousChapter}
+              disabled={currentChapter === 0}
+            >
+              <SkipBack className="h-6 w-6" />
+            </Button>
+
+            <Button
+              variant="auto"
+              size="auto-large"
+              onClick={handlePlayPause}
+              disabled={!isReady || !currentContent}
+              className="h-20 w-20"
+            >
+              {isLoading ? (
+                <div className="animate-pulse-audio">●</div>
+              ) : isPlaying ? (
+                <Pause className="h-8 w-8" />
+              ) : (
+                <Play className="h-8 w-8" />
+              )}
+            </Button>
+
+            <Button
+              variant="auto-secondary"
+              size="auto-large"
+              onClick={handleStop}
+              disabled={!isPlaying && progress === 0}
+            >
+              <Square className="h-6 w-6" />
+            </Button>
+
+            <Button
+              variant="auto-secondary"
+              size="auto-large"
+              onClick={onNextChapter}
+              disabled={currentChapter >= book.chapters.length - 1}
+            >
+              <SkipForward className="h-6 w-6" />
+            </Button>
+          </div>
+
+          {/* Progreso */}
           <div className="w-full">
             <Slider
               value={[progress]}
@@ -163,92 +237,36 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
               disabled={!isPlaying && progress === 0}
             />
           </div>
-          <div className="flex justify-between text-sm text-audio-muted">
-            <span>{Math.round(progress)}%</span>
-            <span>
-              {isLoading ? 'Cargando...' : isReady ? 'Listo' : 'Preparando...'}
-            </span>
-          </div>
-        </div>
-      </Card>
 
-      {/* Controles principales */}
-      <Card className="bg-audio-surface border-audio-muted p-6">
-        <div className="flex items-center justify-center gap-4">
-          <Button
-            variant="auto-secondary"
-            size="auto-large"
-            onClick={onPreviousChapter}
-            disabled={currentChapter === 0}
-          >
-            <SkipBack className="h-6 w-6" />
-          </Button>
-
-          <Button
-            variant="auto"
-            size="auto-large"
-            onClick={handlePlayPause}
-            disabled={!isReady || !currentContent}
-            className="h-20 w-20"
-          >
-            {isLoading ? (
-              <div className="animate-pulse-audio">●</div>
-            ) : isPlaying ? (
-              <Pause className="h-8 w-8" />
-            ) : (
-              <Play className="h-8 w-8" />
-            )}
-          </Button>
-
-          <Button
-            variant="auto-secondary"
-            size="auto-large"
-            onClick={handleStop}
-            disabled={!isPlaying && progress === 0}
-          >
-            <Square className="h-6 w-6" />
-          </Button>
-
-          <Button
-            variant="auto-secondary"
-            size="auto-large"
-            onClick={onNextChapter}
-            disabled={currentChapter >= book.chapters.length - 1}
-          >
-            <SkipForward className="h-6 w-6" />
-          </Button>
-        </div>
-      </Card>
-
-      {/* Controles de velocidad y volumen */}
-      <Card className="bg-audio-surface border-audio-muted p-4">
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <Settings className="h-5 w-5 text-audio-muted" />
-            <span className="text-audio-text min-w-20">Velocidad:</span>
-            <Slider
-              value={[speed]}
-              min={0.5}
-              max={2.0}
-              step={0.1}
-              onValueChange={handleSpeedChange}
-              className="flex-1"
-            />
-            <span className="text-audio-muted min-w-12">{speed.toFixed(1)}x</span>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <Volume2 className="h-5 w-5 text-audio-muted" />
-            <span className="text-audio-text min-w-20">Volumen:</span>
-            <Slider
-              value={[volume]}
-              min={0}
-              max={1}
-              step={0.1}
-              onValueChange={handleVolumeChange}
-              className="flex-1"
-            />
-            <span className="text-audio-muted min-w-12">{Math.round(volume * 100)}%</span>
+          {/* Controles de velocidad y volumen */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <Settings className="h-4 w-4 text-audio-muted" />
+              <span className="text-audio-text text-sm">Velocidad:</span>
+              <Slider
+                value={[speed]}
+                min={0.5}
+                max={2.0}
+                step={0.1}
+                onValueChange={handleSpeedChange}
+                className="flex-1"
+              />
+              <span className="text-audio-muted text-sm min-w-10">{speed.toFixed(1)}x</span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-audio-muted" />
+              <span className="text-audio-text text-sm">Volumen:</span>
+              <Slider
+                value={[volume]}
+                min={0}
+                max={1}
+                step={0.1}
+                onValueChange={handleVolumeChange}
+                className="flex-1"
+              />
+              <span className="text-audio-muted text-sm min-w-10">{Math.round(volume * 100)}%</span>
+            </div>
           </div>
         </div>
       </Card>
@@ -298,6 +316,22 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
           </div>
         )}
       </Card>
+
+      {/* Selector de motor TTS o modelo de Hugging Face */}
+      {showModelSelector ? (
+        <HuggingFaceModelSelector
+          onModelSelect={handleModelSelect}
+          onBack={handleBackFromModelSelector}
+          selectedModel={selectedModel}
+          className="mt-8"
+        />
+      ) : (
+        <TTSEngineSelector
+          currentEngine={engine}
+          onEngineChange={handleEngineChange}
+          className="mt-8"
+        />
+      )}
 
       {/* Error display */}
       {error && (

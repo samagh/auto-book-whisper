@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  android-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auto-book-whisper-builder
+    volumes:
+      # Montar el código fuente para desarrollo
+      - .:/app
+      # Volumen para preservar node_modules entre builds
+      - node_modules:/app/node_modules
+      # Volumen para cache de Gradle
+      - gradle_cache:/root/.gradle
+      # Volumen para APKs generados
+      - ./output:/app/output
+    environment:
+      - NODE_ENV=production
+    working_dir: /app
+    # Para desarrollo, comentar la siguiente línea y usar docker-compose up
+    command: /usr/local/bin/docker-build.sh
+
+  # Servicio para desarrollo web
+  dev-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: auto-book-whisper-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+    working_dir: /app
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  node_modules:
+  gradle_cache:
