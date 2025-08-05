@@ -8,102 +8,102 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Android Auto Dark Theme - High Contrast */
-    --background: 210 30% 8%;
-    --foreground: 210 40% 98%;
-
-    --card: 210 30% 12%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 210 30% 12%;
-    --popover-foreground: 210 40% 98%;
-
+    /* Light Theme */
+    --background: 0 0% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
     --primary: 142 76% 36%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 30% 18%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 210 30% 18%;
-    --muted-foreground: 210 30% 65%;
-
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
     --accent: 38 92% 50%;
-    --accent-foreground: 210 30% 8%;
-
+    --accent-foreground: 222.2 84% 4.9%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-
-    --border: 210 30% 18%;
-    --input: 210 30% 18%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
     --ring: 142 76% 36%;
-
-    /* Audio Player Specific Colors */
-    --audio-primary: 142 76% 36%;
-    --audio-secondary: 38 92% 50%;
-    --audio-background: 210 30% 8%;
-    --audio-surface: 210 30% 12%;
-    --audio-text: 210 40% 98%;
-    --audio-muted: 210 30% 65%;
-    
-    /* Gradients for Android Auto */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--audio-primary)), hsl(142 76% 45%));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--audio-secondary)), hsl(38 92% 60%));
-    
-    /* Shadows for depth */
-    --shadow-auto: 0 4px 20px hsla(var(--audio-primary), 0.3);
-    --shadow-surface: 0 2px 10px hsla(210, 30%, 0%, 0.5);
-    
-    /* Animation timing */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
     --radius: 0.5rem;
 
+    /* Audio Player Specific Colors - Light */
+    --audio-primary: 142 76% 36%;
+    --audio-secondary: 38 92% 50%;
+    --audio-background: 0 0% 98%;
+    --audio-surface: 0 0% 100%;
+    --audio-text: 222.2 84% 4.9%;
+    --audio-muted: 215.4 16.3% 46.9%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(142 76% 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(38 92% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    
+    /* Shadows */
+    --shadow-auto: 0 4px 20px hsl(var(--primary) / 0.15);
+    --shadow-surface: 0 2px 10px hsl(222.2 84% 4.9% / 0.1);
+    --shadow-glow: 0 0 40px hsl(var(--primary) / 0.2);
+    
+    /* Animation */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Sidebar */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    /* Enhanced dark mode for Android Auto */
+    /* Dark Theme - Enhanced for Android Auto */
     --background: 210 30% 8%;
     --foreground: 210 40% 98%;
-
     --card: 210 30% 12%;
     --card-foreground: 210 40% 98%;
-
     --popover: 210 30% 12%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 142 76% 36%;
+    --primary: 142 76% 40%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 30% 18%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 210 30% 18%;
     --muted-foreground: 210 30% 65%;
-
-    --accent: 38 92% 50%;
+    --accent: 38 92% 55%;
     --accent-foreground: 210 30% 8%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 210 30% 18%;
     --input: 210 30% 18%;
-    --ring: 142 76% 36%;
+    --ring: 142 76% 40%;
+
+    /* Audio Colors - Dark */
+    --audio-primary: 142 76% 40%;
+    --audio-secondary: 38 92% 55%;
+    --audio-background: 210 30% 8%;
+    --audio-surface: 210 30% 12%;
+    --audio-text: 210 40% 98%;
+    --audio-muted: 210 30% 65%;
+
+    /* Enhanced Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(142 76% 40%), hsl(142 76% 50%));
+    --gradient-accent: linear-gradient(135deg, hsl(38 92% 55%), hsl(38 92% 65%));
+    --gradient-hero: linear-gradient(135deg, hsl(210 30% 8%) 0%, hsl(210 30% 12%) 50%, hsl(142 76% 40% / 0.1) 100%);
+
+    /* Enhanced Shadows */
+    --shadow-auto: 0 8px 32px hsl(142 76% 40% / 0.3);
+    --shadow-surface: 0 4px 16px hsl(210 30% 0% / 0.5);
+    --shadow-glow: 0 0 60px hsl(142 76% 40% / 0.4);
+
+    /* Sidebar */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -113,33 +113,200 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .neon {
+    /* Neon Theme - Cyberpunk inspired */
+    --background: 270 20% 5%;
+    --foreground: 280 40% 95%;
+    --card: 270 20% 8%;
+    --card-foreground: 280 40% 95%;
+    --popover: 270 20% 8%;
+    --popover-foreground: 280 40% 95%;
+    --primary: 280 100% 60%;
+    --primary-foreground: 270 20% 5%;
+    --secondary: 270 20% 15%;
+    --secondary-foreground: 280 40% 95%;
+    --muted: 270 20% 15%;
+    --muted-foreground: 270 20% 70%;
+    --accent: 180 100% 50%;
+    --accent-foreground: 270 20% 5%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 280 40% 95%;
+    --border: 270 20% 20%;
+    --input: 270 20% 15%;
+    --ring: 280 100% 60%;
+
+    /* Audio Colors - Neon */
+    --audio-primary: 280 100% 60%;
+    --audio-secondary: 180 100% 50%;
+    --audio-background: 270 20% 5%;
+    --audio-surface: 270 20% 8%;
+    --audio-text: 280 40% 95%;
+    --audio-muted: 270 20% 70%;
+
+    /* Neon Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(280 100% 60%), hsl(300 100% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(180 100% 50%), hsl(200 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(270 20% 5%) 0%, hsl(280 100% 60% / 0.1) 50%, hsl(180 100% 50% / 0.1) 100%);
+
+    /* Neon Shadows */
+    --shadow-auto: 0 8px 32px hsl(280 100% 60% / 0.5);
+    --shadow-surface: 0 4px 16px hsl(270 20% 0% / 0.7);
+    --shadow-glow: 0 0 80px hsl(280 100% 60% / 0.6);
+  }
+
+  .ocean {
+    /* Ocean Theme - Deep blue tones */
+    --background: 210 50% 6%;
+    --foreground: 200 30% 92%;
+    --card: 210 50% 10%;
+    --card-foreground: 200 30% 92%;
+    --popover: 210 50% 10%;
+    --popover-foreground: 200 30% 92%;
+    --primary: 200 100% 45%;
+    --primary-foreground: 210 50% 6%;
+    --secondary: 210 50% 16%;
+    --secondary-foreground: 200 30% 92%;
+    --muted: 210 50% 16%;
+    --muted-foreground: 210 30% 70%;
+    --accent: 180 100% 40%;
+    --accent-foreground: 210 50% 6%;
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 200 30% 92%;
+    --border: 210 50% 20%;
+    --input: 210 50% 16%;
+    --ring: 200 100% 45%;
+
+    /* Audio Colors - Ocean */
+    --audio-primary: 200 100% 45%;
+    --audio-secondary: 180 100% 40%;
+    --audio-background: 210 50% 6%;
+    --audio-surface: 210 50% 10%;
+    --audio-text: 200 30% 92%;
+    --audio-muted: 210 30% 70%;
+
+    /* Ocean Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(200 100% 45%), hsl(220 100% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(180 100% 40%), hsl(190 100% 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(210 50% 6%) 0%, hsl(200 100% 45% / 0.1) 50%, hsl(180 100% 40% / 0.1) 100%);
+
+    /* Ocean Shadows */
+    --shadow-auto: 0 8px 32px hsl(200 100% 45% / 0.4);
+    --shadow-surface: 0 4px 16px hsl(210 50% 0% / 0.6);
+    --shadow-glow: 0 0 60px hsl(200 100% 45% / 0.5);
+  }
+
+  .forest {
+    /* Forest Theme - Natural green tones */
+    --background: 120 30% 8%;
+    --foreground: 120 20% 95%;
+    --card: 120 30% 12%;
+    --card-foreground: 120 20% 95%;
+    --popover: 120 30% 12%;
+    --popover-foreground: 120 20% 95%;
+    --primary: 140 70% 35%;
+    --primary-foreground: 120 20% 95%;
+    --secondary: 120 30% 18%;
+    --secondary-foreground: 120 20% 95%;
+    --muted: 120 30% 18%;
+    --muted-foreground: 120 20% 70%;
+    --accent: 60 80% 45%;
+    --accent-foreground: 120 30% 8%;
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 120 20% 95%;
+    --border: 120 30% 22%;
+    --input: 120 30% 18%;
+    --ring: 140 70% 35%;
+
+    /* Audio Colors - Forest */
+    --audio-primary: 140 70% 35%;
+    --audio-secondary: 60 80% 45%;
+    --audio-background: 120 30% 8%;
+    --audio-surface: 120 30% 12%;
+    --audio-text: 120 20% 95%;
+    --audio-muted: 120 20% 70%;
+
+    /* Forest Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(140 70% 35%), hsl(160 70% 40%));
+    --gradient-accent: linear-gradient(135deg, hsl(60 80% 45%), hsl(80 80% 50%));
+    --gradient-hero: linear-gradient(135deg, hsl(120 30% 8%) 0%, hsl(140 70% 35% / 0.1) 50%, hsl(60 80% 45% / 0.1) 100%);
+
+    /* Forest Shadows */
+    --shadow-auto: 0 8px 32px hsl(140 70% 35% / 0.4);
+    --shadow-surface: 0 4px 16px hsl(120 30% 0% / 0.6);
+    --shadow-glow: 0 0 60px hsl(140 70% 35% / 0.5);
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
+    transition: var(--transition-smooth);
   }
 
   body {
     @apply bg-background text-foreground font-sans;
     font-size: 18px; /* Larger base font for Android Auto */
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Android Auto specific base styles */
+  /* Modern Auto styles */
   .auto-text-large {
-    @apply text-2xl font-semibold;
+    @apply text-2xl font-bold tracking-tight;
   }
 
   .auto-text-medium {
-    @apply text-xl font-medium;
+    @apply text-xl font-semibold;
   }
 
   .auto-button-large {
-    @apply min-h-16 min-w-16 text-lg font-semibold;
+    @apply min-h-16 min-w-16 text-lg font-semibold shadow-surface hover:shadow-auto;
+    transition: var(--transition-bounce);
   }
 
-  /* Focus styles for Android Auto accessibility */
+  /* Enhanced focus styles */
   .auto-focus:focus-visible {
     @apply ring-4 ring-primary ring-offset-2 ring-offset-background;
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Glass effect utilities */
+  .glass {
+    @apply backdrop-blur-md bg-card/80 border border-border/50;
+  }
+
+  .glass-strong {
+    @apply backdrop-blur-xl bg-card/90 border border-border/60;
+  }
+
+  /* Animated gradient backgrounds */
+  .gradient-animated {
+    background: var(--gradient-hero);
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Enhanced animations */
+  .hover-lift {
+    transition: var(--transition-bounce);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* Text gradients */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }
