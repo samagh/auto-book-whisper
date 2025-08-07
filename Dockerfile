@@ -19,8 +19,8 @@ RUN apt-get update && apt-get install -y \
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
-# Instalar Node.js 18
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+# Instalar Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
 # Configurar directorio de trabajo
@@ -55,8 +55,8 @@ COPY vite.config.ts ./
 COPY tailwind.config.ts ./
 COPY tsconfig*.json ./
 
-# Instalar dependencias de npm
-RUN npm ci
+# Instalar dependencias de npm y vite globalmente
+RUN npm ci && npm install -g vite
 
 # Copiar el código fuente
 COPY src/ ./src/

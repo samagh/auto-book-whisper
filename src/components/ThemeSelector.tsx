@@ -26,6 +26,11 @@ export const ThemeSelector: React.FC<ThemeSelectorProps> = ({ className }) => {
     const savedTheme = localStorage.getItem('audio-theme') as Theme || 'dark';
     setCurrentTheme(savedTheme);
     applyTheme(savedTheme);
+    
+    // Aplicar tema oscuro por defecto si no hay tema guardado
+    if (!localStorage.getItem('audio-theme')) {
+      applyTheme('dark');
+    }
   }, []);
 
   const applyTheme = (theme: Theme) => {
