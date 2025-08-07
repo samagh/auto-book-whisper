@@ -10,13 +10,13 @@ RUN apt-get update && apt-get install -y \
     wget \
     unzip \
     git \
-    openjdk-11-jdk \
+    openjdk-17-jdk \
     android-tools-adb \
     android-tools-fastboot \
     && rm -rf /var/lib/apt/lists/*
 
 # Configurar variables de entorno de Java
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH=$PATH:$JAVA_HOME/bin
 
 # Instalar Node.js 20
